@@ -1,0 +1,6 @@
+# _config.yml
+markdown: kramdown
+theme: minima
+# Optional: specify a plugin to handle markdown files better
+plugins:
+  - jekyll-optional-front-matter
