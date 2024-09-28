@@ -1,0 +1,11 @@
+bot:
+  api_key: ''
+  name: OpenAI
+flask:
+  debug: true
+  host: localhost
+  port: 5000
+runtime:
+  agent_path: storage/agent
+  current_session_id: edbd5970-f375-4e1f-a8a7-ade4ab4908b7
+  history_path: storage/history
