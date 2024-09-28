@@ -1,2 +1,2 @@
 # llama-design-drive-repo
-project dirctions    
+check https://aierlab.tech/llama-design-drive/ for more information
