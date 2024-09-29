@@ -2,7 +2,7 @@
 name: AI Tool Function Request
 about: This template is used to request the implementation of an AI tool function
   within the project.
-title: 'AI Tool Function Request: {{ function_name }}'
+title: '[AI Tool Function Request]: {{ function_name }}'
 labels: documentation, enhancement
 assignees: yhbcode000, Yubo-Shao
 
