@@ -38,7 +38,7 @@
         "type": "function",
         "function": {
             "name": "get_all_stop_times",
-            "description": "Obtains all stop times of buses/metro for a given public transport station in Dubai.",
+            "description": "Obtains all stop times of buses/metro for a given public transport station in Dubai. If an error is encountered, simply report the error itself.",
             "parameters": {
                 "type": "object",
                 "properties": {

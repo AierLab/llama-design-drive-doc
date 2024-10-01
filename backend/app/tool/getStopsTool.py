@@ -13,6 +13,7 @@ def get_all_stop_times(stop_name):
     result = stop_times[stop_times['stop_id'].isin(stop_ids)]
 
     return result.to_json(orient='records')
+    
 
 
 #print(get_all_stop_times("max Metro Station 1"))

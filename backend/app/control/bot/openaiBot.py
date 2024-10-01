@@ -1,5 +1,7 @@
 from openai import OpenAI
 import json
+import os
+os.chdir(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 
 from app.model.dataModel import MessageModel, SessionModel, VectorDataModel, RoleEnum
 from app.model.agentModel import AgentModel
