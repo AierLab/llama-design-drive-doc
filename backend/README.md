@@ -1,7 +1,7 @@
 # install and run
 
 ```bash
-uv install
+uv sync
 
 # execute at anywhere
 start-server
