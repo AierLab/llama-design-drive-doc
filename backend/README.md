@@ -1,12 +1,10 @@
-# Backend explain
+# install and run
 
 ```bash
-cd backend
+uv install
 
-pip install -e .
-pip install -e .[dev]
-pip install -e .[test]
-
+# execute at anywhere
+start-server
 ```
 
 # Run all tests

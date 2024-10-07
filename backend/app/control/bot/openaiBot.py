@@ -1,7 +1,7 @@
 from openai import OpenAI
 import json
 import os
-os.chdir(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+os.chdir(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
 
 from app.model.dataModel import MessageModel, SessionModel, VectorDataModel, RoleEnum
 from app.model.agentModel import AgentModel
@@ -35,31 +35,31 @@ class OpenAIBot(BaseBot):
             fake_message = message
 
         messages = session.serialize()["message_list"] + [fake_message.serialize()]
-        
-        while(True):    
+
+        while(True):
             response = self.client.chat.completions.create(
-                # model="gpt-4o-mini", # TODO 
+                # model="gpt-4o-mini", # TODO
                 model="llama3.1",
                 messages=messages,
                 tools=tools,
             )
-            
+
             # Check if the conversation was too long for the context window
             if response.choices[0].finish_reason == "length":
                 print("Error: The conversation was too long for the context window.")
                 # Handle the error as needed, e.g., by truncating the conversation or asking for clarification
                 handle_length_error(response)
                 break
-                
+
             # Check if the model's output included copyright material (or similar)
             if response.choices[0].finish_reason == "content_filter":
                 print("Error: The content was filtered due to policy violations.")
                 # Handle the error as needed, e.g., by modifying the request or notifying the user
                 handle_content_filter_error(response)
                 break
-                
+
             # Check if the model has made a tool_call. This is the case either if the "finish_reason" is "tool_calls" or if the "finish_reason" is "stop" and our API request had forced a function call
-            if (response.choices[0].finish_reason == "tool_calls" or 
+            if (response.choices[0].finish_reason == "tool_calls" or
                 # This handles the edge case where if we forced the model to call one of our functions, the finish_reason will actually be "stop" instead of "tool_calls"
                 (our_api_request_forced_a_tool_call and response.choices[0].finish_reason == "stop")):
                 # Handle tool call
@@ -67,7 +67,7 @@ class OpenAIBot(BaseBot):
                 # Your code to handle tool calls
                 handle_tool_call(response, messages)
                 continue
-                
+
             # Else finish_reason is "stop", in which case the model was just responding directly to the user
             elif response.choices[0].finish_reason == "stop":
                 # Handle the normal stop case
@@ -75,7 +75,7 @@ class OpenAIBot(BaseBot):
                 # Your code to handle normal responses
                 handle_normal_response(response, messages)
                 break
-                
+
             # Catch any other case, this is unexpected
             else:
                 print("Unexpected finish_reason:", response.choices[0].finish_reason)
@@ -90,7 +90,7 @@ class OpenAIBot(BaseBot):
 
         # Return the last assistant message and the updated context
         return message_response
-    
+
 def append_to_message(response, messages):
     role, content = response.choices[0].message.role, response.choices[0].message.content
     messages.append(dict(role=role, content=content))
@@ -98,19 +98,19 @@ def append_to_message(response, messages):
 
 def handle_tool_call(response, messages):
     append_to_message(response, messages)
-    
+
     # Iterate through tool calls to handle each weather check
     for tool_call in response.choices[0].message.tool_calls:
         function = FUNCTION_MAPPING.get(tool_call.function.name)
         arguments = json.loads(tool_call.function.arguments)
         function_output = function(**arguments)
-        
+
         tool_output = {
                 "role": "tool",
                 "tool_call_id": tool_call.id
             }
-        
-        
+
+
         if tool_call.function.name == "some_specific_name":
             # need to engineer the output content
             pass
@@ -118,11 +118,10 @@ def handle_tool_call(response, messages):
             tool_output["content"] = json.dumps(dict(weather=function_output))
         else:
             tool_output["content"] = json.dumps(function_output)
-        
-        
+
+
         messages.append(tool_output)
 
 def handle_normal_response(response, messages):
     append_to_message(response, messages)
     print("Assistant: " + response.choices[0].message.content)
-    
