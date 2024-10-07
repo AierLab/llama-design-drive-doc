@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-base_path = "~/Desktop/database/"
+base_path = os.path.join(os.getcwd(), "storage/datasets/GTFS_File")
 
 class GTFS_data:
     base_path = os.path.dirname(__file__)
