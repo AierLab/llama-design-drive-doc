@@ -1,4 +1,6 @@
 from flask import Flask, request, jsonify
+from enum import Enum
+import random
 
 from app.control.bot import PetalsBot
 from app.control.bot.openaiBot import OpenAIBot
@@ -8,6 +10,10 @@ from app.dao.configDataManager import ConfigManager
 from app.dao.historyDataManager import HistoryManager
 from app.model.dataModel import MessageModel, RoleEnum
 
+class ActionEnum(Enum):
+    DISPLAY = 'display'
+    ALERT = 'alert'
+    STILL = 'still'
 
 def get_nested_attribute(obj, attr_path):
     attributes = attr_path.split('.')
@@ -76,22 +82,46 @@ class AppView:
         @self.app.route('/ask', methods=['POST'])
         def ask():
             data = request.json
+
+            # Extract 'content', 'agent_name', and 'data' (GPS or any other dict-like data)
             content = data.get('content')
             agent_name = data.get('agent_name')
-            agent = self.agentManager.load(agent_name)
-            if not content:
-                return jsonify({'error': 'No content provided'}), 400
+            additional_data = data.get('data', {})  # Fallback to empty dict if not provided
 
+            if not content or not agent_name:
+                return jsonify({'error': 'Content or agent_name not provided'}), 400
+
+            # Load agent by name
+            agent = self.agentManager.load(agent_name)
+            if not agent:
+                return jsonify({'error': f'Agent {agent_name} not found'}), 404
+
+            # Add sys message and user message to the session history
+            message = MessageModel(role=RoleEnum.USER, content=f"{RoleEnum.SYSTEM.name}: {additional_data}") # TODO better use additional_data, define in llm prompt.
+            self.history_manager.add_session_message(message, self.current_session)
+            
             message = MessageModel(role=RoleEnum.USER, content=f"{RoleEnum.USER.name}: {content}")
             self.history_manager.add_session_message(message, self.current_session)
 
+            # Simulate bot interaction
             bot = self.get_current_bot()(self.config_manager.config.bot.api_key)
             if not bot:
                 return jsonify({'error': 'No bot configured or bot unavailable'}), 500
 
             response_message = bot.ask(message, self.current_session, agent)
             self.history_manager.add_session_message(response_message, self.current_session)
-            return jsonify({'response': response_message.content})
+
+            # Assuming the bot's response contains the necessary information
+            actions = [ActionEnum.DISPLAY.value, ActionEnum.STILL.value, ActionEnum.ALERT.value] # TODO REMOVE ME WHEN ACTION COMPLETE
+
+            response_data = {
+                'title': response_message.content[:20], # TODO Add a better way to extract title, multi agent support
+                'message': response_message.content,
+                'action': random.choice(actions)  # TODO Add a better way to extract title, action pick tool want
+            }
+
+            # Return structured response as JSON
+            return jsonify(response_data), 200
 
         @self.app.route('/session', methods=['GET', 'PUT', 'DELETE'])
         def session():
