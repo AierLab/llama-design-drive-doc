@@ -133,6 +133,18 @@
             "time_created": "2024-09-28 21:39:44",
             "role": "user",
             "content": "test"
+        },
+        {
+            "id": "62185106-6fa2-40a9-a71f-952266567478",
+            "time_created": "2024-10-07 00:21:27",
+            "role": "user",
+            "content": "USER: hello"
+        },
+        {
+            "id": "8510707f-d19d-4c7a-9270-ddec809f2be3",
+            "time_created": "2024-10-07 00:24:06",
+            "role": "user",
+            "content": "USER: hello"
         }
     ],
     "vector_store_id": null

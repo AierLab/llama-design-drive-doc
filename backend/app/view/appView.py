@@ -50,6 +50,7 @@ bots = {
 
 class AppView:
     def __init__(self, config_manager: ConfigManager):
+        self.app = Flask(__name__)
         self.config_manager = config_manager
         self.history_manager = HistoryManager(history_path=config_manager.config.runtime.history_path)
 
@@ -63,8 +64,6 @@ class AppView:
 
         self.agentManager = AgentManager(agent_path=config_manager.config.runtime.agent_path)
 
-        self.app = Flask(__name__)
-
         self._setup_routes()
 
     def get_current_bot(self):
@@ -73,11 +72,11 @@ class AppView:
     def _setup_routes(self):
         @self.app.route('/bots', methods=['GET'])
         def bots_list():
-            return jsonify(list(bots.keys()))
+            return jsonify({"data": list(bots.keys())})
 
         @self.app.route('/agent', methods=['GET'])
         def agent_list():
-            return jsonify(self.agentManager.agent_name_list)
+            return jsonify({"data": self.agentManager.agent_name_list})
 
         @self.app.route('/ask', methods=['POST'])
         def ask():
@@ -85,7 +84,7 @@ class AppView:
 
             # Extract 'content', 'agent_name', and 'data' (GPS or any other dict-like data)
             content = data.get('content')
-            agent_name = data.get('agent_name')
+            agent_name = data.get('agent') # FIXME frontend follow same naming sense, use agent_name for str agent, agent for object
             additional_data = data.get('data', {})  # Fallback to empty dict if not provided
 
             if not content or not agent_name:
@@ -99,7 +98,7 @@ class AppView:
             # Add sys message and user message to the session history
             message = MessageModel(role=RoleEnum.USER, content=f"{RoleEnum.SYSTEM.name}: {additional_data}") # TODO better use additional_data, define in llm prompt.
             self.history_manager.add_session_message(message, self.current_session)
-            
+
             message = MessageModel(role=RoleEnum.USER, content=f"{RoleEnum.USER.name}: {content}")
             self.history_manager.add_session_message(message, self.current_session)
 
@@ -154,12 +153,12 @@ class AppView:
         @self.app.route('/history', methods=['GET', 'PUT', 'DELETE'])
         def history():
             if request.method == 'GET':
-                return jsonify(self.history_manager.history.session_id_list)
+                return jsonify({"sessions": self.history_manager.history.session_id_list})
             if request.method == 'PUT':
                 self.current_session = self.history_manager.create_session()
                 self.history_manager.history.session_id_list.append(self.current_session.id)
                 self.config_manager.config.runtime.current_session_id = self.current_session.id
-                return jsonify(self.current_session.id)
+                return jsonify({"session_id": self.current_session.id})
             elif request.method == 'DELETE':
                 session_id = request.json.get('session_id')
                 # Added a check to make sure session_id is provided

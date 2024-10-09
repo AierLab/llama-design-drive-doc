@@ -1,0 +1,25 @@
+{
+    "id": "ccf88198-cf90-49fd-a162-b10dde0e6095",
+    "time_created": "2024-10-10 04:06:51",
+    "message_list": [
+        {
+            "id": "5315e1fb-cd58-4347-967f-0ea53b922ba7",
+            "time_created": "2024-10-10 04:06:57",
+            "role": "user",
+            "content": "SYSTEM: {}"
+        },
+        {
+            "id": "8f611c96-c18c-4cd3-aa61-174d1eab26b7",
+            "time_created": "2024-10-10 04:06:57",
+            "role": "user",
+            "content": "USER: \u4f60\u597d"
+        },
+        {
+            "id": "f07faaf1-e41f-402a-a98c-2015ec4541ee",
+            "time_created": "2024-10-10 04:07:04",
+            "role": "assistant",
+            "content": "\ud83d\ude0a Hi there! Nice to meet you too! What brings you here today? I'm happy to help answer any questions or chat about anything on your mind.\n\nIs everything going well at work? \ud83e\udd14"
+        }
+    ],
+    "vector_store_id": null
+}
