@@ -18,7 +18,7 @@ with open(file_path, 'r') as file:
 
 class OpenAIBot(BaseBot):
     def __init__(self, api_key):
-        # self.client = OpenAI(api_key=api_key) # TODO add switch
+        # self.client = OpenAI(api_key=api_key) # TODO add support for openai model
         self.client = OpenAI(
             base_url='http://localhost:11434/v1/',
             api_key='ollama',
@@ -27,7 +27,8 @@ class OpenAIBot(BaseBot):
             message: MessageModel,
             session: SessionModel,
             agent: AgentModel,
-            vector_store_model: VectorDataModel = None) -> MessageModel:
+            vector_store_model: VectorDataModel = None,
+            force_tool_call: bool = True) -> MessageModel:
         if agent:
             fake_message = MessageModel(content=agent.generate_prompt(query=message.content),
                                         role=message.role)
@@ -38,10 +39,10 @@ class OpenAIBot(BaseBot):
 
         while(True):
             response = self.client.chat.completions.create(
-                # model="gpt-4o-mini", # TODO
-                model="llama3.1",
+                # model="gpt-4o-mini", # TODO add support for openai model
+                model="llama3.2",
                 messages=messages,
-                tools=tools,
+                tools=tools if force_tool_call else None,
             )
 
             # Check if the conversation was too long for the context window
@@ -82,6 +83,7 @@ class OpenAIBot(BaseBot):
                 # Handle unexpected cases as needed
                 handle_unexpected_case(response)
                 break
+            
 
         # Retrieve the bot's response
         content_response = messages[-1]["content"]
@@ -104,7 +106,10 @@ def handle_tool_call(response, messages):
         function = FUNCTION_MAPPING.get(tool_call.function.name)
         arguments = json.loads(tool_call.function.arguments)
         function_output = function(**arguments)
-
+        
+        if function_output is None:
+            function_output = "N/A"
+            
         tool_output = {
                 "role": "tool",
                 "tool_call_id": tool_call.id
@@ -119,8 +124,8 @@ def handle_tool_call(response, messages):
         else:
             tool_output["content"] = json.dumps(function_output)
 
-
-        messages.append(tool_output)
+        # prepend the tool output to the messages list
+        messages = [tool_output] + messages 
 
 def handle_normal_response(response, messages):
     append_to_message(response, messages)
