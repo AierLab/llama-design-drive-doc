@@ -84,14 +84,14 @@ class AppView:
 
             # Extract 'content', 'agent_name', and 'data' (GPS or any other dict-like data)
             content = data.get('content')
-            agent = data.get('agent')
+            agent_name = data.get('agent') # FIXME frontend follow same naming sense, use agent_name for str agent, agent for object
             additional_data = data.get('data', {})  # Fallback to empty dict if not provided
 
-            if not content or not agent:
+            if not content or not agent_name:
                 return jsonify({'error': 'Content or agent_name not provided'}), 400
 
             # Load agent by name
-            agent = self.agentManager.load(agent)
+            agent = self.agentManager.load(agent_name)
             if not agent:
                 return jsonify({'error': f'Agent {agent} not found'}), 404
 
