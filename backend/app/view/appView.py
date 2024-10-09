@@ -93,7 +93,7 @@ class AppView:
             # Load agent by name
             agent = self.agentManager.load(agent_name)
             if not agent:
-                return jsonify({'error': f'Agent {agent} not found'}), 404
+                return jsonify({'error': f'Agent {agent_name} not found'}), 404
 
             # Add sys message and user message to the session history
             message = MessageModel(role=RoleEnum.USER, content=f"{RoleEnum.SYSTEM.name}: {additional_data}") # TODO better use additional_data, define in llm prompt.
