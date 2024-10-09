@@ -50,6 +50,7 @@ bots = {
 
 class AppView:
     def __init__(self, config_manager: ConfigManager):
+        self.app = Flask(__name__)
         self.config_manager = config_manager
         self.history_manager = HistoryManager(history_path=config_manager.config.runtime.history_path)
 
@@ -62,8 +63,6 @@ class AppView:
             self.config_manager.save()
 
         self.agentManager = AgentManager(agent_path=config_manager.config.runtime.agent_path)
-
-        self.app = Flask(__name__)
 
         self._setup_routes()
 
@@ -99,7 +98,7 @@ class AppView:
             # Add sys message and user message to the session history
             message = MessageModel(role=RoleEnum.USER, content=f"{RoleEnum.SYSTEM.name}: {additional_data}") # TODO better use additional_data, define in llm prompt.
             self.history_manager.add_session_message(message, self.current_session)
-            
+
             message = MessageModel(role=RoleEnum.USER, content=f"{RoleEnum.USER.name}: {content}")
             self.history_manager.add_session_message(message, self.current_session)
 

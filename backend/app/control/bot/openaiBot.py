@@ -1,7 +1,7 @@
 from openai import OpenAI
 import json
 import os
-os.chdir(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
+os.chdir(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 
 from app.model.dataModel import MessageModel, SessionModel, VectorDataModel, RoleEnum
 from app.model.agentModel import AgentModel
@@ -83,7 +83,7 @@ class OpenAIBot(BaseBot):
                 # Handle unexpected cases as needed
                 handle_unexpected_case(response)
                 break
-            
+
 
         # Retrieve the bot's response
         content_response = messages[-1]["content"]
@@ -106,10 +106,10 @@ def handle_tool_call(response, messages):
         function = FUNCTION_MAPPING.get(tool_call.function.name)
         arguments = json.loads(tool_call.function.arguments)
         function_output = function(**arguments)
-        
+
         if function_output is None:
             function_output = "N/A"
-            
+
         tool_output = {
                 "role": "tool",
                 "tool_call_id": tool_call.id
@@ -125,7 +125,7 @@ def handle_tool_call(response, messages):
             tool_output["content"] = json.dumps(function_output)
 
         # prepend the tool output to the messages list
-        messages = [tool_output] + messages 
+        messages = [tool_output] + messages
 
 def handle_normal_response(response, messages):
     append_to_message(response, messages)
