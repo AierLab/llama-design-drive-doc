@@ -7,6 +7,7 @@ from app.model.dataModel import MessageModel, SessionModel, VectorDataModel, Rol
 from app.model.agentModel import AgentModel
 from .baseBot import BaseBot
 from app.tool import *
+from app.tool.gtfs import GTFS_data
 
 file_path="storage/tool/tool_register.json"
 
@@ -15,6 +16,12 @@ our_api_request_forced_a_tool_call = False
 # Load the JSON data from the file
 with open(file_path, 'r') as file:
     tools = json.load(file)
+    
+# Dynamically update tools before tool calls are invoked
+for tool in tools:
+        if tool['function']['name'] == 'get_all_stop_times':
+            tool['function']['parameters']['properties']['stop_name']['enum'] = GTFS_data().stops['stop_name']
+            break
 
 class OpenAIBot(BaseBot):
     def __init__(self, api_key):
