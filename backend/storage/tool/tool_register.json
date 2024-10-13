@@ -47,11 +47,7 @@
                 "properties": {
                     "stop_name": {
                         "type": "string",
-                        "enum": [
-                            "centrepoint Metro Station 1",
-                            "Emirates Metro Station 1",
-                            "Airport Terminal 3 Metro Station 1"
-                        ],
+                        "enum": [],
                         "description": "The name of the public transport station"
                     }
                 },
