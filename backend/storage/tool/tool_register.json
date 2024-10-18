@@ -60,5 +60,39 @@
                 ]
             }
         }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "google_maps_navigation",
+            "description": "Utilizes the Google Maps API to return the full navigation path given the longitude and latitude of the start and destination points.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "start_longitude": {
+                        "type": "number",
+                        "description": "The longitude of the starting point."
+                    },
+                    "start_latitude": {
+                        "type": "number",
+                        "description": "The latitude of the starting point."
+                    },
+                    "destination_longitude": {
+                        "type": "number",
+                        "description": "The longitude of the destination point."
+                    },
+                    "destination_latitude": {
+                        "type": "number",
+                        "description": "The latitude of the destination point."
+                    }
+                },
+                "required": [
+                    "start_longitude",
+                    "start_latitude",
+                    "destination_longitude",
+                    "destination_latitude"
+                ]
+            }
+        }
     }
 ]

@@ -17,5 +17,34 @@
                 ]
             }
         }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "local_traffic_prediction",
+            "description": "Predicts traffic patterns and potential congestion using locally stored historical and real-time traffic data.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "prediction_window": {
+                        "type": "integer",
+                        "description": "The time window (in minutes or hours) for which the model should predict future traffic conditions."
+                    },
+                    "update_interval": {
+                        "type": "integer",
+                        "description": "The interval at which real-time data should update predictions."
+                    },
+                    "region": {
+                        "type": "string",
+                        "description": "The region or area within the city for which traffic predictions should be made."
+                    }
+                },
+                "required": [
+                    "prediction_window",
+                    "update_interval",
+                    "region"
+                ]
+            }
+        }
     }
 ]
